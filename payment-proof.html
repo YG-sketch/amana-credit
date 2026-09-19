@@ -1,0 +1,591 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Payment Confirmation - Loan Platform</title>
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background: #f5f7fb;
+            color: #172033;
+        }
+
+        header {
+            background: white;
+            padding: 20px 7%;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        .logo {
+            font-size: 23px;
+            font-weight: bold;
+        }
+
+        .container {
+            max-width: 650px;
+            margin: 40px auto;
+            padding: 20px;
+        }
+
+        .card {
+            background: white;
+            padding: 35px;
+            border-radius: 18px;
+            box-shadow: 0 5px 25px rgba(0,0,0,0.06);
+        }
+
+        .country {
+            display: inline-block;
+            background: #ecfdf3;
+            color: #047857;
+            padding: 8px 13px;
+            border-radius: 20px;
+            font-size: 14px;
+            margin-bottom: 20px;
+        }
+
+        h1 {
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            color: #667085;
+            line-height: 1.6;
+            margin-bottom: 25px;
+        }
+
+        .summary {
+            background: #f9fafb;
+            border-radius: 12px;
+            padding: 18px;
+            margin-bottom: 25px;
+        }
+
+        .row {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+        }
+
+        .label {
+            color: #667085;
+        }
+
+        .value {
+            font-weight: bold;
+        }
+
+        .form-group {
+            margin-bottom: 22px;
+        }
+
+        label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 8px;
+        }
+
+        input[type="text"],
+        input[type="file"] {
+            width: 100%;
+            padding: 13px;
+            border: 1px solid #d0d5dd;
+            border-radius: 8px;
+            font-size: 15px;
+            background: white;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: #0f766e;
+        }
+
+        .upload-box {
+            border: 2px dashed #d0d5dd;
+            padding: 25px;
+            border-radius: 12px;
+            text-align: center;
+        }
+
+        .upload-box p {
+            color: #667085;
+            font-size: 14px;
+            margin-bottom: 15px;
+        }
+
+        .preview {
+            display: none;
+            margin-top: 15px;
+        }
+
+        .preview img {
+            max-width: 100%;
+            max-height: 300px;
+            border-radius: 10px;
+            border: 1px solid #e5e7eb;
+        }
+
+        .submit-btn {
+            width: 100%;
+            padding: 15px;
+            border: none;
+            border-radius: 9px;
+            background: #0f766e;
+            color: white;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .submit-btn:hover {
+            background: #115e59;
+        }
+
+        .security {
+            margin-top: 20px;
+            padding: 15px;
+            background: #f0fdf4;
+            color: #166534;
+            border-radius: 10px;
+            font-size: 13px;
+            line-height: 1.5;
+        }
+
+        .required {
+            color: #dc2626;
+        }
+
+        @media (max-width: 600px) {
+
+            .container {
+                margin: 15px auto;
+            }
+
+            .card {
+                padding: 25px;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+<header>
+
+    <div class="logo">
+        Loan Platform
+    </div>
+
+</header>
+
+
+<div class="container">
+
+    <div class="card">
+
+        <div
+            id="countryBadge"
+            class="country"
+        >
+            Country
+        </div>
+
+
+        <h1>
+            Confirm Your Payment
+        </h1>
+
+
+        <p class="subtitle">
+
+            Enter the transaction reference from your
+            payment confirmation and upload a clear
+            screenshot of the transaction.
+
+        </p>
+
+
+        <div class="summary">
+
+            <div class="row">
+
+                <span class="label">
+                    Payment method
+                </span>
+
+                <span
+                    class="value"
+                    id="paymentMethod"
+                >
+                    --
+                </span>
+
+            </div>
+
+
+            <div class="row">
+
+                <span class="label">
+                    Amount
+                </span>
+
+                <span
+                    class="value"
+                    id="paymentAmount"
+                >
+                    --
+                </span>
+
+            </div>
+
+        </div>
+
+
+        <form id="proofForm">
+
+
+            <div class="form-group">
+
+                <label for="transactionReference">
+
+                    Transaction Reference
+                    <span class="required">*</span>
+
+                </label>
+
+                <input
+                    type="text"
+                    id="transactionReference"
+                    placeholder="e.g. QWE123XYZ"
+                    required
+                >
+
+            </div>
+
+
+            <div class="form-group">
+
+                <label>
+
+                    Payment Screenshot
+                    <span class="required">*</span>
+
+                </label>
+
+
+                <div class="upload-box">
+
+                    <p>
+                        Upload a clear screenshot showing
+                        the payment confirmation.
+                    </p>
+
+                    <input
+                        type="file"
+                        id="paymentScreenshot"
+                        accept="image/png,image/jpeg,image/webp"
+                        required
+                    >
+
+
+                    <div
+                        class="preview"
+                        id="preview"
+                    >
+
+                        <img
+                            id="previewImage"
+                            alt="Payment screenshot preview"
+                        >
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <button
+                type="submit"
+                class="submit-btn"
+            >
+                Submit for Verification
+            </button>
+
+
+        </form>
+
+
+        <div class="security">
+
+            🔒 Your application will remain pending until
+            the payment information is reviewed and verified.
+            Do not upload passwords, PINs, OTPs or other
+            confidential security information.
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<script>
+
+
+const country =
+    localStorage.getItem("country");
+
+const currency =
+    localStorage.getItem("currency") || "";
+
+const processingFee =
+    Number(
+        localStorage.getItem("processingFee")
+    ) || 0;
+
+const paymentMethod =
+    localStorage.getItem("paymentMethod");
+
+
+const countryNames = {
+
+    KE: "🇰🇪 Kenya (KE)",
+
+    UG: "🇺🇬 Uganda (UG)",
+
+    TZ: "🇹🇿 Tanzania (TZ)"
+
+};
+
+
+const methodNames = {
+
+    mpesa: "Safaricom M-PESA",
+
+    airtel: "Airtel Money",
+
+    mtn: "MTN Mobile Money",
+
+    mobile: "Mobile Money"
+
+};
+
+
+document.getElementById(
+    "countryBadge"
+).textContent =
+    countryNames[country] ||
+    "Country";
+
+
+document.getElementById(
+    "paymentMethod"
+).textContent =
+    methodNames[paymentMethod] ||
+    "Payment method";
+
+
+document.getElementById(
+    "paymentAmount"
+).textContent =
+    currency +
+    " " +
+    processingFee.toLocaleString();
+
+
+const screenshot =
+    document.getElementById(
+        "paymentScreenshot"
+    );
+
+
+const preview =
+    document.getElementById(
+        "preview"
+    );
+
+
+const previewImage =
+    document.getElementById(
+        "previewImage"
+    );
+
+
+screenshot.addEventListener(
+    "change",
+    function() {
+
+        const file =
+            screenshot.files[0];
+
+        if (!file) {
+
+            preview.style.display =
+                "none";
+
+            return;
+
+        }
+
+
+        if (
+            !file.type.startsWith(
+                "image/"
+            )
+        ) {
+
+            alert(
+                "Please upload an image file."
+            );
+
+            screenshot.value = "";
+
+            return;
+
+        }
+
+
+        if (
+            file.size >
+            5 * 1024 * 1024
+        ) {
+
+            alert(
+                "The screenshot must be smaller than 5MB."
+            );
+
+            screenshot.value = "";
+
+            return;
+
+        }
+
+
+        const reader =
+            new FileReader();
+
+
+        reader.onload =
+            function(event) {
+
+                previewImage.src =
+                    event.target.result;
+
+                preview.style.display =
+                    "block";
+
+            };
+
+
+        reader.readAsDataURL(file);
+
+    }
+);
+
+
+document.getElementById(
+    "proofForm"
+).addEventListener(
+    "submit",
+    function(event) {
+
+        event.preventDefault();
+
+
+        const reference =
+            document.getElementById(
+                "transactionReference"
+            ).value.trim();
+
+
+        const file =
+            screenshot.files[0];
+
+
+        if (!reference) {
+
+            alert(
+                "Please enter your transaction reference."
+            );
+
+            return;
+
+        }
+
+
+        if (!file) {
+
+            alert(
+                "Please upload your payment screenshot."
+            );
+
+            return;
+
+        }
+
+
+        /*
+            Prototype only:
+
+            We store the application status
+            locally for testing.
+
+            In production this information
+            must be sent securely to a backend
+            and the uploaded file should be
+            stored in secure object storage.
+        */
+
+
+        localStorage.setItem(
+            "transactionReference",
+            reference
+        );
+
+
+        localStorage.setItem(
+            "paymentStatus",
+            "PENDING_VERIFICATION"
+        );
+
+
+        localStorage.setItem(
+            "applicationStatus",
+            "PAYMENT_PROOF_SUBMITTED"
+        );
+
+
+        window.location.href =
+            "dashboard.html";
+
+    }
+);
+
+
+</script>
+
+
+</body>
+
+</html>
