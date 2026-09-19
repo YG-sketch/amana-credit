@@ -1,0 +1,676 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>My Application - Loan Platform</title>
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background: #f5f7fb;
+            color: #172033;
+        }
+
+        header {
+            background: white;
+            padding: 18px 7%;
+            border-bottom: 1px solid #e5e7eb;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 23px;
+            font-weight: bold;
+        }
+
+        .logout {
+            color: #475467;
+            text-decoration: none;
+            font-size: 14px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 40px auto;
+            padding: 20px;
+        }
+
+        .welcome {
+            margin-bottom: 25px;
+        }
+
+        .welcome h1 {
+            margin-bottom: 8px;
+        }
+
+        .welcome p {
+            color: #667085;
+        }
+
+        .country {
+            display: inline-block;
+            margin-top: 12px;
+            background: #ecfdf3;
+            color: #047857;
+            padding: 8px 13px;
+            border-radius: 20px;
+            font-size: 14px;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .card {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+        }
+
+        .card h2 {
+            font-size: 18px;
+            margin-bottom: 20px;
+        }
+
+        .loan-card {
+            grid-column: span 2;
+        }
+
+        .loan-amount {
+            font-size: 40px;
+            font-weight: bold;
+            margin-bottom: 8px;
+        }
+
+        .loan-label {
+            color: #667085;
+            margin-bottom: 20px;
+        }
+
+        .details {
+            border-top: 1px solid #e5e7eb;
+            padding-top: 15px;
+        }
+
+        .row {
+            display: flex;
+            justify-content: space-between;
+            padding: 9px 0;
+        }
+
+        .row span:first-child {
+            color: #667085;
+        }
+
+        .row span:last-child {
+            font-weight: bold;
+        }
+
+        .status {
+            display: inline-block;
+            padding: 7px 12px;
+            border-radius: 20px;
+            background: #fffaeb;
+            color: #92400e;
+            font-size: 13px;
+        }
+
+        .timeline {
+            margin-top: 10px;
+        }
+
+        .step {
+            display: flex;
+            gap: 15px;
+            position: relative;
+            padding-bottom: 25px;
+        }
+
+        .step:last-child {
+            padding-bottom: 0;
+        }
+
+        .circle {
+            width: 30px;
+            height: 30px;
+            min-width: 30px;
+            border-radius: 50%;
+            background: #e5e7eb;
+            color: #667085;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 13px;
+            font-weight: bold;
+        }
+
+        .step.completed .circle {
+            background: #0f766e;
+            color: white;
+        }
+
+        .step.current .circle {
+            background: #f59e0b;
+            color: white;
+        }
+
+        .step-info h3 {
+            font-size: 15px;
+            margin-bottom: 5px;
+        }
+
+        .step-info p {
+            font-size: 13px;
+            color: #667085;
+            line-height: 1.4;
+        }
+
+        .reference {
+            background: #f9fafb;
+            padding: 12px;
+            border-radius: 8px;
+            margin-top: 10px;
+            word-break: break-all;
+            font-family: monospace;
+        }
+
+        .support {
+            margin-top: 20px;
+            text-align: center;
+            color: #667085;
+            font-size: 14px;
+        }
+
+        @media (max-width: 700px) {
+
+            .grid {
+                grid-template-columns: 1fr;
+            }
+
+            .loan-card {
+                grid-column: span 1;
+            }
+
+            .loan-amount {
+                font-size: 32px;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+<header>
+
+    <div class="logo">
+        Loan Platform
+    </div>
+
+    <a
+        href="index.html"
+        class="logout"
+    >
+        Home
+    </a>
+
+</header>
+
+
+<div class="container">
+
+
+    <div class="welcome">
+
+        <h1>
+            Welcome, <span id="name">Customer</span>
+        </h1>
+
+        <p>
+            Here's an update on your loan application.
+        </p>
+
+        <div
+            class="country"
+            id="country"
+        >
+            Country
+        </div>
+
+    </div>
+
+
+    <div class="grid">
+
+
+        <!-- LOAN SUMMARY -->
+
+        <div class="card loan-card">
+
+            <h2>
+                Loan Application
+            </h2>
+
+            <div
+                class="loan-amount"
+                id="loanAmount"
+            >
+                --
+            </div>
+
+            <div class="loan-label">
+                Indicative loan amount
+            </div>
+
+
+            <div class="details">
+
+                <div class="row">
+
+                    <span>
+                        Processing fee
+                    </span>
+
+                    <span id="fee">
+                        --
+                    </span>
+
+                </div>
+
+
+                <div class="row">
+
+                    <span>
+                        Payment method
+                    </span>
+
+                    <span id="method">
+                        --
+                    </span>
+
+                </div>
+
+
+                <div class="row">
+
+                    <span>
+                        Application status
+                    </span>
+
+                    <span
+                        class="status"
+                        id="status"
+                    >
+                        Pending verification
+                    </span>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- APPLICATION PROGRESS -->
+
+        <div class="card">
+
+            <h2>
+                Application Progress
+            </h2>
+
+            <div class="timeline">
+
+
+                <div class="step completed">
+
+                    <div class="circle">
+                        ✓
+                    </div>
+
+                    <div class="step-info">
+
+                        <h3>
+                            Application submitted
+                        </h3>
+
+                        <p>
+                            Your application information
+                            has been received.
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <div class="step completed">
+
+                    <div class="circle">
+                        ✓
+                    </div>
+
+                    <div class="step-info">
+
+                        <h3>
+                            Eligibility assessment
+                        </h3>
+
+                        <p>
+                            Your initial assessment
+                            has been completed.
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <div class="step completed">
+
+                    <div class="circle">
+                        ✓
+                    </div>
+
+                    <div class="step-info">
+
+                        <h3>
+                            Payment proof submitted
+                        </h3>
+
+                        <p>
+                            Your payment information
+                            has been submitted.
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <div class="step current">
+
+                    <div class="circle">
+                        4
+                    </div>
+
+                    <div class="step-info">
+
+                        <h3>
+                            Payment verification
+                        </h3>
+
+                        <p>
+                            Your transaction is awaiting
+                            verification.
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <div class="step">
+
+                    <div class="circle">
+                        5
+                    </div>
+
+                    <div class="step-info">
+
+                        <h3>
+                            Final decision
+                        </h3>
+
+                        <p>
+                            Final approval is subject to
+                            verification and applicable
+                            lending criteria.
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <div class="step">
+
+                    <div class="circle">
+                        6
+                    </div>
+
+                    <div class="step-info">
+
+                        <h3>
+                            Disbursement
+                        </h3>
+
+                        <p>
+                            If approved, disbursement will
+                            follow the applicable terms.
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+            </div>
+
+        </div>
+
+
+        <!-- PAYMENT DETAILS -->
+
+        <div class="card">
+
+            <h2>
+                Payment Details
+            </h2>
+
+            <div class="row">
+
+                <span>
+                    Transaction reference
+                </span>
+
+            </div>
+
+            <div
+                class="reference"
+                id="reference"
+            >
+                --
+            </div>
+
+
+            <div class="row">
+
+                <span>
+                    Payment status
+                </span>
+
+                <span id="paymentStatus">
+                    Pending verification
+                </span>
+
+            </div>
+
+        </div>
+
+
+    </div>
+
+
+    <div class="support">
+
+        Need help with your application?
+        Contact customer support.
+
+    </div>
+
+
+</div>
+
+
+<script>
+
+
+const fullname =
+    localStorage.getItem("fullname")
+    || "Customer";
+
+
+const countryCode =
+    localStorage.getItem("country");
+
+
+const currency =
+    localStorage.getItem("currency")
+    || "";
+
+
+const loanAmount =
+    Number(
+        localStorage.getItem("loanAmount")
+    ) || 0;
+
+
+const processingFee =
+    Number(
+        localStorage.getItem("processingFee")
+    ) || 0;
+
+
+const paymentMethod =
+    localStorage.getItem("paymentMethod")
+    || "";
+
+
+const transactionReference =
+    localStorage.getItem(
+        "transactionReference"
+    )
+    || "Not provided";
+
+
+const paymentStatus =
+    localStorage.getItem(
+        "paymentStatus"
+    )
+    || "PENDING_VERIFICATION";
+
+
+const countries = {
+
+    KE: "🇰🇪 Kenya (KE)",
+
+    UG: "🇺🇬 Uganda (UG)",
+
+    TZ: "🇹🇿 Tanzania (TZ)"
+
+};
+
+
+const methods = {
+
+    mpesa: "Safaricom M-PESA",
+
+    airtel: "Airtel Money",
+
+    mtn: "MTN Mobile Money",
+
+    mobile: "Mobile Money"
+
+};
+
+
+document.getElementById(
+    "name"
+).textContent =
+    fullname;
+
+
+document.getElementById(
+    "country"
+).textContent =
+    countries[countryCode]
+    || "Country";
+
+
+document.getElementById(
+    "loanAmount"
+).textContent =
+    currency +
+    " " +
+    loanAmount.toLocaleString();
+
+
+document.getElementById(
+    "fee"
+).textContent =
+    currency +
+    " " +
+    processingFee.toLocaleString();
+
+
+document.getElementById(
+    "method"
+).textContent =
+    methods[paymentMethod]
+    || "Payment method";
+
+
+document.getElementById(
+    "reference"
+).textContent =
+    transactionReference;
+
+
+if (
+    paymentStatus ===
+    "PENDING_VERIFICATION"
+) {
+
+    document.getElementById(
+        "status"
+    ).textContent =
+        "Pending verification";
+
+    document.getElementById(
+        "paymentStatus"
+    ).textContent =
+        "Pending verification";
+
+}
+
+</script>
+
+
+</body>
+
+</html>
