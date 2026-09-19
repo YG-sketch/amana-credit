@@ -319,84 +319,60 @@
 </div>
 
 <script>
+const form = document.getElementById("registerForm");
 
-function detectCountry() {
+form.addEventListener("submit", async function (event) {
+    event.preventDefault();
 
-    const code = document.getElementById("countryCode").value;
+    const fullName = document.getElementById("fullName").value.trim();
+    const phone = document.getElementById("phone").value.trim();
+    const country = document.getElementById("country").value;
 
-    const display = document.getElementById("countryDisplay");
-
-    let country = "";
-
-    if (code === "+254") {
-        country = "🇰🇪 Kenya (KE)";
+    if (!fullName || !phone || !country) {
+        alert("Please complete all required fields.");
+        return;
     }
 
-    if (code === "+256") {
-        country = "🇺🇬 Uganda (UG)";
-    }
+    const submitButton = form.querySelector("button[type='submit']");
+    submitButton.disabled = true;
+    submitButton.textContent = "Creating account...";
 
-    if (code === "+255") {
-        country = "🇹🇿 Tanzania (TZ)";
-    }
+    try {
+        const response = await fetch("/api/register", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                full_name: fullName,
+                phone: phone,
+                country: country
+            })
+        });
 
-    display.innerHTML =
-        "Country detected: <strong>" + country + "</strong>";
+        const result = await response.json();
 
-    display.style.display = "block";
-}
-
-document
-    .getElementById("registrationForm")
-    .addEventListener("submit", function(event) {
-
-        event.preventDefault();
-
-        const code =
-            document.getElementById("countryCode").value;
-
-        let country = "";
-
-        if (code === "+254") {
-            country = "KE";
+        if (!response.ok) {
+            throw new Error(result.error || "Registration failed.");
         }
 
-        if (code === "+256") {
-            country = "UG";
-        }
-
-        if (code === "+255") {
-            country = "TZ";
-        }
-
+        // Keep only non-sensitive information locally for the prototype.
+        localStorage.setItem("customerId", result.customer.id);
+        localStorage.setItem("fullname", fullName);
+        localStorage.setItem("phone", phone);
         localStorage.setItem("country", country);
-
-        localStorage.setItem(
-            "fullname",
-            document.getElementById("fullname").value
-        );
-
-        localStorage.setItem(
-            "phone",
-            code + document.getElementById("phone").value
-        );
-
-        localStorage.setItem(
-            "income",
-            document.getElementById("income").value
-        );
-
-        localStorage.setItem(
-            "loanPurpose",
-            document.getElementById("loanPurpose").value
-        );
 
         window.location.href = "eligibility.html";
 
-    });
+    } catch (error) {
+        console.error(error);
+        alert(error.message || "Something went wrong. Please try again.");
 
-detectCountry();
-
+        submitButton.disabled = false;
+        submitButton.textContent = "Continue";
+    }
+});
+    
 </script>
 
 </body>
