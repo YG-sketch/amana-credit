@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Loan Offer - Loan Platform</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background: #f5f7fb;
+            color: #172033;
+        }
+
+        header {
+            background: white;
+            padding: 20px 7%;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        .logo {
+            font-size: 23px;
+            font-weight: bold;
+        }
+
+        .container {
+            max-width: 650px;
+            margin: 45px auto;
+            padding: 20px;
+        }
+
+        .card {
+            background: white;
+            padding: 35px;
+            border-radius: 18px;
+            box-shadow: 0 5px 25px rgba(0,0,0,0.06);
+        }
+
+        .success-icon {
+            width: 65px;
+            height: 65px;
+            margin: 0 auto 20px;
+            border-radius: 50%;
+            background: #ecfdf3;
+            color: #047857;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 30px;
+        }
+
+        .heading {
+            text-align: center;
+        }
+
+        h1 {
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            color: #667085;
+            line-height: 1.5;
+            margin-bottom: 30px;
+        }
+
+        .country {
+            display: inline-block;
+            background: #f0fdf4;
+            color: #166534;
+            padding: 8px 13px;
+            border-radius: 20px;
+            font-size: 14px;
+            margin-bottom: 25px;
+        }
+
+        .offer {
+            border: 1px solid #e5e7eb;
+            border-radius: 14px;
+            padding: 25px;
+            margin-bottom: 25px;
+        }
+
+        .offer-title {
+            color: #667085;
+            font-size: 14px;
+            margin-bottom: 8px;
+        }
+
+        .amount {
+            font-size: 42px;
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+
+        .details {
+            border-top: 1px solid #e5e7eb;
+            padding-top: 18px;
+        }
+
+        .row {
+            display: flex;
+            justify-content: space-between;
+            padding: 9px 0;
+            color: #475467;
+        }
+
+        .row strong {
+            color: #172033;
+        }
+
+        .notice {
+            background: #fffaeb;
+            border: 1px solid #fedf89;
+            color: #92400e;
+            padding: 15px;
+            border-radius: 10px;
+            line-height: 1.5;
+            font-size: 14px;
+            margin-bottom: 25px;
+        }
+
+        .continue-btn {
+            width: 100%;
+            border: none;
+            background: #0f766e;
+            color: white;
+            padding: 15px;
+            border-radius: 9px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .continue-btn:hover {
+            background: #115e59;
+        }
+
+        .small {
+            text-align: center;
+            margin-top: 18px;
+            color: #667085;
+            font-size: 13px;
+            line-height: 1.5;
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                margin: 15px auto;
+            }
+
+            .card {
+                padding: 25px;
+            }
+
+            .amount {
+                font-size: 34px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<header>
+    <div class="logo">Loan Platform</div>
+</header>
+
+<div class="container">
+
+    <div class="card">
+
+        <div class="heading">
+
+            <div class="success-icon">
+                ✓
+            </div>
+
+            <div id="countryBadge" class="country">
+                Country
+            </div>
+
+            <h1>Initial Loan Offer</h1>
+
+            <p class="subtitle">
+                Your application has completed the initial assessment.
+                Review the indicative offer below before continuing.
+            </p>
+
+        </div>
+
+        <div class="offer">
+
+            <div class="offer-title">
+                Indicative loan amount
+            </div>
+
+            <div id="loanAmount" class="amount">
+                --
+            </div>
+
+            <div class="details">
+
+                <div class="row">
+                    <span>Processing fee</span>
+                    <strong id="processingFee">--</strong>
+                </div>
+
+                <div class="row">
+                    <span>Currency</span>
+                    <strong id="currency">--</strong>
+                </div>
+
+                <div class="row">
+                    <span>Application status</span>
+                    <strong>Initial assessment</strong>
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="notice">
+            This is an indicative offer based on the information provided.
+            Final approval, applicable fees, repayment terms and
+            disbursement are subject to verification and the applicable
+            terms and conditions.
+        </div>
+
+        <button
+            class="continue-btn"
+            onclick="continueToPayment()"
+        >
+            Continue to Payment
+        </button>
+
+        <p class="small">
+            Please review the applicable fees and repayment terms before
+            making any payment.
+        </p>
+
+    </div>
+
+</div>
+
+<script>
+
+const country = localStorage.getItem("country");
+
+const countryData = {
+
+    KE: {
+        name: "🇰🇪 Kenya (KE)",
+        currency: "KES",
+        symbol: "KSh",
+        loan: 500,
+        fee: 150
+    },
+
+    UG: {
+        name: "🇺🇬 Uganda (UG)",
+        currency: "UGX",
+        symbol: "UGX",
+        loan: 500,
+        fee: 150
+    },
+
+    TZ: {
+        name: "🇹🇿 Tanzania (TZ)",
+        currency: "TZS",
+        symbol: "TZS",
+        loan: 500,
+        fee: 150
+    }
+
+};
+
+const data = countryData[country];
+
+if (!data) {
+
+    alert("Country information could not be identified.");
+
+    window.location.href = "register.html";
+
+} else {
+
+    document.getElementById("countryBadge").textContent =
+        data.name;
+
+    document.getElementById("loanAmount").textContent =
+        data.symbol + " " + data.loan.toLocaleString();
+
+    document.getElementById("processingFee").textContent =
+        data.symbol + " " + data.fee.toLocaleString();
+
+    document.getElementById("currency").textContent =
+        data.currency;
+
+}
+
+function continueToPayment() {
+
+    localStorage.setItem(
+        "loanAmount",
+        data.loan
+    );
+
+    localStorage.setItem(
+        "processingFee",
+        data.fee
+    );
+
+    localStorage.setItem(
+        "currency",
+        data.currency
+    );
+
+    window.location.href = "payment.html";
+
+}
+
+</script>
+
+</body>
+</html>
