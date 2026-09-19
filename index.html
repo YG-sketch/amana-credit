@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Loan Platform</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background: #f5f7fb;
+            color: #172033;
+        }
+
+        header {
+            background: #ffffff;
+            padding: 20px 7%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        .login-btn {
+            background: #172033;
+            color: white;
+            padding: 10px 18px;
+            border-radius: 8px;
+            text-decoration: none;
+        }
+
+        .hero {
+            min-height: 75vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 60px 20px;
+        }
+
+        .hero-content {
+            max-width: 700px;
+        }
+
+        .hero h1 {
+            font-size: 48px;
+            margin-bottom: 20px;
+        }
+
+        .hero p {
+            font-size: 18px;
+            color: #667085;
+            line-height: 1.6;
+            margin-bottom: 30px;
+        }
+
+        .apply-btn {
+            display: inline-block;
+            background: #0f766e;
+            color: white;
+            padding: 15px 30px;
+            border-radius: 10px;
+            text-decoration: none;
+            font-size: 17px;
+            font-weight: bold;
+        }
+
+        .countries {
+            margin-top: 35px;
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .country {
+            background: white;
+            padding: 12px 18px;
+            border-radius: 10px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.05);
+        }
+
+        footer {
+            text-align: center;
+            padding: 25px;
+            background: #172033;
+            color: white;
+        }
+
+        @media (max-width: 600px) {
+            .hero h1 {
+                font-size: 34px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<header>
+    <div class="logo">Loan Platform</div>
+
+    <a href="#" class="login-btn">Login</a>
+</header>
+
+<section class="hero">
+
+    <div class="hero-content">
+
+        <h1>Simple Access to Credit</h1>
+
+        <p>
+            Apply online, complete your profile and receive an eligibility
+            assessment for available loan products in your country.
+        </p>
+
+        <a href="#" class="apply-btn">
+            Apply for a Loan
+        </a>
+
+        <div class="countries">
+
+            <div class="country">
+                🇰🇪 Kenya
+            </div>
+
+            <div class="country">
+                🇺🇬 Uganda
+            </div>
+
+            <div class="country">
+                🇹🇿 Tanzania
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+<footer>
+    © 2026 Loan Platform. All rights reserved.
+</footer>
+
+</body>
+</html>
