@@ -1,0 +1,667 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Payment - Loan Platform</title>
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background: #f5f7fb;
+            color: #172033;
+        }
+
+        header {
+            background: white;
+            padding: 20px 7%;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        .logo {
+            font-size: 23px;
+            font-weight: bold;
+        }
+
+        .container {
+            max-width: 650px;
+            margin: 40px auto;
+            padding: 20px;
+        }
+
+        .card {
+            background: white;
+            padding: 35px;
+            border-radius: 18px;
+            box-shadow: 0 5px 25px rgba(0,0,0,0.06);
+        }
+
+        h1 {
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            color: #667085;
+            line-height: 1.6;
+            margin-bottom: 25px;
+        }
+
+        .country {
+            display: inline-block;
+            background: #ecfdf3;
+            color: #047857;
+            padding: 8px 13px;
+            border-radius: 20px;
+            font-size: 14px;
+            margin-bottom: 20px;
+        }
+
+        .payment-summary {
+            background: #f9fafb;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 25px;
+        }
+
+        .row {
+            display: flex;
+            justify-content: space-between;
+            padding: 9px 0;
+            color: #475467;
+        }
+
+        .row strong {
+            color: #172033;
+        }
+
+        .total {
+            border-top: 1px solid #e5e7eb;
+            margin-top: 8px;
+            padding-top: 15px;
+            font-size: 18px;
+        }
+
+        .methods-title {
+            margin-bottom: 15px;
+        }
+
+        .method {
+            border: 1px solid #d0d5dd;
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 12px;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .method:hover {
+            border-color: #0f766e;
+        }
+
+        .method.active {
+            border-color: #0f766e;
+            background: #f0fdfa;
+        }
+
+        .method-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .method-header input {
+            width: auto;
+        }
+
+        .method-name {
+            font-weight: bold;
+        }
+
+        .method-description {
+            margin-top: 7px;
+            margin-left: 27px;
+            color: #667085;
+            font-size: 13px;
+        }
+
+        .instructions {
+            display: none;
+            margin-top: 20px;
+            padding: 18px;
+            background: #fffaeb;
+            border: 1px solid #fedf89;
+            border-radius: 10px;
+            color: #92400e;
+            line-height: 1.6;
+        }
+
+        .instructions.show {
+            display: block;
+        }
+
+        .payment-number {
+            margin-top: 10px;
+            font-size: 20px;
+            font-weight: bold;
+            color: #172033;
+        }
+
+        .continue-btn {
+            width: 100%;
+            margin-top: 25px;
+            padding: 15px;
+            border: none;
+            border-radius: 9px;
+            background: #0f766e;
+            color: white;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .continue-btn:hover {
+            background: #115e59;
+        }
+
+        .notice {
+            margin-top: 18px;
+            font-size: 13px;
+            color: #667085;
+            line-height: 1.5;
+        }
+
+        @media (max-width: 600px) {
+
+            .container {
+                margin: 15px auto;
+            }
+
+            .card {
+                padding: 25px;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+<header>
+
+    <div class="logo">
+        Loan Platform
+    </div>
+
+</header>
+
+
+<div class="container">
+
+    <div class="card">
+
+        <div
+            id="countryBadge"
+            class="country"
+        >
+            Country
+        </div>
+
+        <h1>
+            Processing Payment
+        </h1>
+
+        <p class="subtitle">
+
+            Select an available payment method below.
+            Follow the instructions carefully and keep
+            your transaction confirmation.
+
+        </p>
+
+
+        <div class="payment-summary">
+
+            <div class="row">
+
+                <span>
+                    Loan amount
+                </span>
+
+                <strong id="loanAmount">
+                    --
+                </strong>
+
+            </div>
+
+
+            <div class="row">
+
+                <span>
+                    Processing fee
+                </span>
+
+                <strong id="processingFee">
+                    --
+                </strong>
+
+            </div>
+
+
+            <div class="row total">
+
+                <span>
+                    Payment required
+                </span>
+
+                <strong id="paymentAmount">
+                    --
+                </strong>
+
+            </div>
+
+        </div>
+
+
+        <h3 class="methods-title">
+            Select payment method
+        </h3>
+
+
+        <div id="methods">
+
+            <!-- Payment methods are inserted by JavaScript -->
+
+        </div>
+
+
+        <div
+            id="instructions"
+            class="instructions"
+        >
+
+            <strong>
+                Payment instructions
+            </strong>
+
+            <p id="instructionText">
+                Select a payment method above.
+            </p>
+
+            <div
+                id="paymentNumber"
+                class="payment-number"
+            >
+            </div>
+
+        </div>
+
+
+        <button
+            class="continue-btn"
+            onclick="continueToProof()"
+        >
+            I Have Made the Payment
+        </button>
+
+
+        <p class="notice">
+
+            Your payment must be successfully verified before
+            your application can proceed. Keep your transaction
+            confirmation for verification.
+
+        </p>
+
+    </div>
+
+</div>
+
+
+<script>
+
+const country =
+    localStorage.getItem("country");
+
+const loanAmount =
+    Number(localStorage.getItem("loanAmount")) || 0;
+
+const processingFee =
+    Number(localStorage.getItem("processingFee")) || 0;
+
+const currency =
+    localStorage.getItem("currency") || "";
+
+
+const countryData = {
+
+    KE: {
+
+        name: "🇰🇪 Kenya (KE)",
+
+        methods: [
+
+            {
+                id: "mpesa",
+                name: "Safaricom M-PESA",
+                description: "Pay using M-PESA."
+            },
+
+            {
+                id: "airtel",
+                name: "Airtel Money",
+                description: "Pay using Airtel Money."
+            }
+
+        ]
+
+    },
+
+
+    UG: {
+
+        name: "🇺🇬 Uganda (UG)",
+
+        methods: [
+
+            {
+                id: "mtn",
+                name: "MTN Mobile Money",
+                description: "Pay using MTN Mobile Money."
+            },
+
+            {
+                id: "airtel",
+                name: "Airtel Money",
+                description: "Pay using Airtel Money."
+            }
+
+        ]
+
+    },
+
+
+    TZ: {
+
+        name: "🇹🇿 Tanzania (TZ)",
+
+        methods: [
+
+            {
+                id: "airtel",
+                name: "Airtel Money",
+                description: "Pay using Airtel Money."
+            },
+
+            {
+                id: "mobile",
+                name: "Mobile Money",
+                description: "Use a supported mobile-money provider."
+            }
+
+        ]
+
+    }
+
+};
+
+
+const data =
+    countryData[country];
+
+
+if (!data) {
+
+    alert(
+        "Country information could not be identified."
+    );
+
+    window.location.href =
+        "register.html";
+
+}
+
+
+document.getElementById(
+    "countryBadge"
+).textContent =
+    data.name;
+
+
+document.getElementById(
+    "loanAmount"
+).textContent =
+    currency + " " +
+    loanAmount.toLocaleString();
+
+
+document.getElementById(
+    "processingFee"
+).textContent =
+    currency + " " +
+    processingFee.toLocaleString();
+
+
+document.getElementById(
+    "paymentAmount"
+).textContent =
+    currency + " " +
+    processingFee.toLocaleString();
+
+
+const methodsContainer =
+    document.getElementById("methods");
+
+
+data.methods.forEach(function(method) {
+
+    const div =
+        document.createElement("div");
+
+    div.className =
+        "method";
+
+    div.innerHTML = `
+
+        <div class="method-header">
+
+            <input
+                type="radio"
+                name="paymentMethod"
+                value="${method.id}"
+            >
+
+            <span class="method-name">
+                ${method.name}
+            </span>
+
+        </div>
+
+        <div class="method-description">
+            ${method.description}
+        </div>
+
+    `;
+
+    div.addEventListener(
+        "click",
+        function() {
+
+            const radio =
+                div.querySelector("input");
+
+            radio.checked = true;
+
+            document
+                .querySelectorAll(".method")
+                .forEach(function(item) {
+
+                    item.classList.remove(
+                        "active"
+                    );
+
+                });
+
+            div.classList.add("active");
+
+            showInstructions(
+                method.id
+            );
+
+        }
+    );
+
+    methodsContainer.appendChild(div);
+
+});
+
+
+function showInstructions(method) {
+
+    const instructions =
+        document.getElementById(
+            "instructions"
+        );
+
+    const instructionText =
+        document.getElementById(
+            "instructionText"
+        );
+
+    const paymentNumber =
+        document.getElementById(
+            "paymentNumber"
+        );
+
+
+    /*
+       IMPORTANT:
+       Replace these placeholders with
+       your verified business payment
+       details only after the relevant
+       payment accounts are configured.
+    */
+
+    if (
+        country === "KE" &&
+        method === "mpesa"
+    ) {
+
+        instructionText.textContent =
+            "Use the official M-PESA payment option provided by the business.";
+
+        paymentNumber.textContent =
+            "Payment gateway: M-PESA";
+
+    }
+
+
+    else if (
+        country === "KE" &&
+        method === "airtel"
+    ) {
+
+        instructionText.textContent =
+            "Use the official Airtel Money payment option provided by the business.";
+
+        paymentNumber.textContent =
+            "Payment gateway: Airtel Money";
+
+    }
+
+
+    else if (
+        country === "UG" &&
+        method === "mtn"
+    ) {
+
+        instructionText.textContent =
+            "Use the official MTN Mobile Money payment option provided by the business.";
+
+        paymentNumber.textContent =
+            "Payment gateway: MTN Mobile Money";
+
+    }
+
+
+    else if (
+        method === "airtel"
+    ) {
+
+        instructionText.textContent =
+            "Use the official Airtel Money payment option provided by the business.";
+
+        paymentNumber.textContent =
+            "Payment gateway: Airtel Money";
+
+    }
+
+
+    else {
+
+        instructionText.textContent =
+            "Use the supported mobile-money payment option provided by the business.";
+
+        paymentNumber.textContent =
+            "Payment gateway";
+
+    }
+
+
+    instructions.classList.add(
+        "show"
+    );
+
+}
+
+
+function continueToProof() {
+
+    const selected =
+        document.querySelector(
+            'input[name="paymentMethod"]:checked'
+        );
+
+
+    if (!selected) {
+
+        alert(
+            "Please select a payment method first."
+        );
+
+        return;
+
+    }
+
+
+    localStorage.setItem(
+        "paymentMethod",
+        selected.value
+    );
+
+
+    window.location.href =
+        "payment-proof.html";
+
+}
+
+</script>
+
+</body>
+
+</html>
