@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Create Account - Loan Platform</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background: #f5f7fb;
+            color: #172033;
+            min-height: 100vh;
+        }
+
+        header {
+            background: white;
+            padding: 20px 7%;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        .logo {
+            font-size: 23px;
+            font-weight: bold;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 550px;
+            margin: 50px auto;
+            padding: 20px;
+        }
+
+        .card {
+            background: white;
+            padding: 35px;
+            border-radius: 16px;
+            box-shadow: 0 5px 25px rgba(0,0,0,0.06);
+        }
+
+        h1 {
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            color: #667085;
+            margin-bottom: 30px;
+            line-height: 1.5;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+        }
+
+        input,
+        select {
+            width: 100%;
+            padding: 13px;
+            border: 1px solid #d0d5dd;
+            border-radius: 8px;
+            font-size: 15px;
+        }
+
+        input:focus,
+        select:focus {
+            outline: none;
+            border-color: #0f766e;
+        }
+
+        .phone-wrapper {
+            display: flex;
+            gap: 8px;
+        }
+
+        .country-code {
+            width: 110px;
+            background: #f9fafb;
+        }
+
+        .phone-number {
+            flex: 1;
+        }
+
+        .country-display {
+            margin-top: 10px;
+            padding: 10px;
+            background: #f0fdf4;
+            color: #166534;
+            border-radius: 8px;
+            display: none;
+        }
+
+        .continue-btn {
+            width: 100%;
+            border: none;
+            background: #0f766e;
+            color: white;
+            padding: 15px;
+            border-radius: 9px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+
+        .continue-btn:hover {
+            background: #115e59;
+        }
+
+        .login {
+            text-align: center;
+            margin-top: 20px;
+            color: #667085;
+        }
+
+        .login a {
+            color: #0f766e;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        .terms {
+            font-size: 13px;
+            color: #667085;
+            margin-top: 20px;
+            line-height: 1.5;
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                margin: 20px auto;
+            }
+
+            .card {
+                padding: 25px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<header>
+    <div class="logo">Loan Platform</div>
+</header>
+
+<div class="container">
+
+    <div class="card">
+
+        <h1>Create your account</h1>
+
+        <p class="subtitle">
+            Enter your details to begin your loan application.
+        </p>
+
+        <form id="registrationForm">
+
+            <div class="form-group">
+
+                <label for="fullname">
+                    Full Name
+                </label>
+
+                <input
+                    type="text"
+                    id="fullname"
+                    placeholder="Enter your full name"
+                    required
+                >
+
+            </div>
+
+            <div class="form-group">
+
+                <label for="phone">
+                    Mobile Number
+                </label>
+
+                <div class="phone-wrapper">
+
+                    <select
+                        id="countryCode"
+                        class="country-code"
+                        onchange="detectCountry()"
+                    >
+
+                        <option value="+254">🇰🇪 +254</option>
+                        <option value="+256">🇺🇬 +256</option>
+                        <option value="+255">🇹🇿 +255</option>
+
+                    </select>
+
+                    <input
+                        type="tel"
+                        id="phone"
+                        class="phone-number"
+                        placeholder="712345678"
+                        required
+                    >
+
+                </div>
+
+                <div id="countryDisplay" class="country-display"></div>
+
+            </div>
+
+            <div class="form-group">
+
+                <label for="income">
+                    Source of Income
+                </label>
+
+                <select id="income" required>
+
+                    <option value="">
+                        Select your income source
+                    </option>
+
+                    <option>
+                        Employment
+                    </option>
+
+                    <option>
+                        Business
+                    </option>
+
+                    <option>
+                        Freelance / Online Work
+                    </option>
+
+                    <option>
+                        Farming
+                    </option>
+
+                    <option>
+                        Other
+                    </option>
+
+                </select>
+
+            </div>
+
+            <div class="form-group">
+
+                <label for="loanPurpose">
+                    What will you use the loan for?
+                </label>
+
+                <select id="loanPurpose" required>
+
+                    <option value="">
+                        Select purpose
+                    </option>
+
+                    <option>
+                        Emergency
+                    </option>
+
+                    <option>
+                        Business
+                    </option>
+
+                    <option>
+                        Education
+                    </option>
+
+                    <option>
+                        Medical
+                    </option>
+
+                    <option>
+                        Household expenses
+                    </option>
+
+                    <option>
+                        Other
+                    </option>
+
+                </select>
+
+            </div>
+
+            <button
+                type="submit"
+                class="continue-btn"
+            >
+                Continue
+            </button>
+
+        </form>
+
+        <p class="terms">
+            By continuing, you acknowledge that your information may be
+            used to assess your eligibility and process your application,
+            subject to the applicable privacy policy and terms.
+        </p>
+
+        <div class="login">
+            Already have an account?
+            <a href="#">Login</a>
+        </div>
+
+    </div>
+
+</div>
+
+<script>
+
+function detectCountry() {
+
+    const code = document.getElementById("countryCode").value;
+
+    const display = document.getElementById("countryDisplay");
+
+    let country = "";
+
+    if (code === "+254") {
+        country = "🇰🇪 Kenya (KE)";
+    }
+
+    if (code === "+256") {
+        country = "🇺🇬 Uganda (UG)";
+    }
+
+    if (code === "+255") {
+        country = "🇹🇿 Tanzania (TZ)";
+    }
+
+    display.innerHTML =
+        "Country detected: <strong>" + country + "</strong>";
+
+    display.style.display = "block";
+}
+
+document
+    .getElementById("registrationForm")
+    .addEventListener("submit", function(event) {
+
+        event.preventDefault();
+
+        const code =
+            document.getElementById("countryCode").value;
+
+        let country = "";
+
+        if (code === "+254") {
+            country = "KE";
+        }
+
+        if (code === "+256") {
+            country = "UG";
+        }
+
+        if (code === "+255") {
+            country = "TZ";
+        }
+
+        localStorage.setItem("country", country);
+
+        localStorage.setItem(
+            "fullname",
+            document.getElementById("fullname").value
+        );
+
+        localStorage.setItem(
+            "phone",
+            code + document.getElementById("phone").value
+        );
+
+        localStorage.setItem(
+            "income",
+            document.getElementById("income").value
+        );
+
+        localStorage.setItem(
+            "loanPurpose",
+            document.getElementById("loanPurpose").value
+        );
+
+        window.location.href = "eligibility.html";
+
+    });
+
+detectCountry();
+
+</script>
+
+</body>
+</html>
