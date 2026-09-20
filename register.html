@@ -1,3 +1,4 @@
+```html
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -120,6 +121,11 @@
             background: #115e59;
         }
 
+        .continue-btn:disabled {
+            background: #94a3b8;
+            cursor: not-allowed;
+        }
+
         .login {
             text-align: center;
             margin-top: 20px;
@@ -147,6 +153,10 @@
             .card {
                 padding: 25px;
             }
+
+            .country-code {
+                width: 105px;
+            }
         }
     </style>
 </head>
@@ -169,6 +179,7 @@
 
         <form id="registrationForm">
 
+            <!-- FULL NAME -->
             <div class="form-group">
 
                 <label for="fullname">
@@ -179,11 +190,14 @@
                     type="text"
                     id="fullname"
                     placeholder="Enter your full name"
+                    autocomplete="name"
                     required
                 >
 
             </div>
 
+
+            <!-- PHONE NUMBER -->
             <div class="form-group">
 
                 <label for="phone">
@@ -195,12 +209,20 @@
                     <select
                         id="countryCode"
                         class="country-code"
-                        onchange="detectCountry()"
+                        required
                     >
 
-                        <option value="+254">🇰🇪 +254</option>
-                        <option value="+256">🇺🇬 +256</option>
-                        <option value="+255">🇹🇿 +255</option>
+                        <option value="KE">
+                            🇰🇪 +254
+                        </option>
+
+                        <option value="UG">
+                            🇺🇬 +256
+                        </option>
+
+                        <option value="TZ">
+                            🇹🇿 +255
+                        </option>
 
                     </select>
 
@@ -209,44 +231,53 @@
                         id="phone"
                         class="phone-number"
                         placeholder="712345678"
+                        autocomplete="tel"
                         required
                     >
 
                 </div>
 
-                <div id="countryDisplay" class="country-display"></div>
+                <div
+                    id="countryDisplay"
+                    class="country-display"
+                ></div>
 
             </div>
 
+
+            <!-- SOURCE OF INCOME -->
             <div class="form-group">
 
                 <label for="income">
                     Source of Income
                 </label>
 
-                <select id="income" required>
+                <select
+                    id="income"
+                    required
+                >
 
                     <option value="">
                         Select your income source
                     </option>
 
-                    <option>
+                    <option value="Employment">
                         Employment
                     </option>
 
-                    <option>
+                    <option value="Business">
                         Business
                     </option>
 
-                    <option>
+                    <option value="Freelance / Online Work">
                         Freelance / Online Work
                     </option>
 
-                    <option>
+                    <option value="Farming">
                         Farming
                     </option>
 
-                    <option>
+                    <option value="Other">
                         Other
                     </option>
 
@@ -254,39 +285,44 @@
 
             </div>
 
+
+            <!-- LOAN PURPOSE -->
             <div class="form-group">
 
                 <label for="loanPurpose">
                     What will you use the loan for?
                 </label>
 
-                <select id="loanPurpose" required>
+                <select
+                    id="loanPurpose"
+                    required
+                >
 
                     <option value="">
                         Select purpose
                     </option>
 
-                    <option>
+                    <option value="Emergency">
                         Emergency
                     </option>
 
-                    <option>
+                    <option value="Business">
                         Business
                     </option>
 
-                    <option>
+                    <option value="Education">
                         Education
                     </option>
 
-                    <option>
+                    <option value="Medical">
                         Medical
                     </option>
 
-                    <option>
+                    <option value="Household expenses">
                         Household expenses
                     </option>
 
-                    <option>
+                    <option value="Other">
                         Other
                     </option>
 
@@ -294,6 +330,8 @@
 
             </div>
 
+
+            <!-- SUBMIT -->
             <button
                 type="submit"
                 class="continue-btn"
@@ -303,91 +341,253 @@
 
         </form>
 
+
+        <!-- TERMS -->
         <p class="terms">
             By continuing, you acknowledge that your information may be
             used to assess your eligibility and process your application,
             subject to the applicable privacy policy and terms.
         </p>
 
+
+        <!-- LOGIN -->
         <div class="login">
+
             Already have an account?
-            <a href="#">Login</a>
+
+            <a href="#">
+                Login
+            </a>
+
         </div>
 
     </div>
 
 </div>
 
-```html
+
 <script>
+
 const form = document.getElementById("registrationForm");
 
+
 form.addEventListener("submit", async function (event) {
+
     event.preventDefault();
 
-    const fullName = document.getElementById("fullname").value.trim();
-    const phone = document.getElementById("phone").value.trim();
-    const country = document.getElementById("countryCode").value;
-    const income = document.getElementById("income").value;
-    const loanPurpose = document.getElementById("loanPurpose").value;
 
-    if (!fullName || !phone || !country || !income || !loanPurpose) {
+    // Get form values
+    const fullName =
+        document.getElementById("fullname").value.trim();
+
+    const phone =
+        document.getElementById("phone").value.trim();
+
+    const country =
+        document.getElementById("countryCode").value;
+
+    const income =
+        document.getElementById("income").value;
+
+    const loanPurpose =
+        document.getElementById("loanPurpose").value;
+
+
+    // Validate fields
+    if (
+        !fullName ||
+        !phone ||
+        !country ||
+        !income ||
+        !loanPurpose
+    ) {
+
         alert("Please complete all required fields.");
+
         return;
     }
 
-    const submitButton = form.querySelector("button[type='submit']");
+
+    // Basic phone validation
+    const phoneClean = phone.replace(/\D/g, "");
+
+    if (phoneClean.length < 7 || phoneClean.length > 15) {
+
+        alert("Please enter a valid mobile number.");
+
+        return;
+    }
+
+
+    // Submit button
+    const submitButton =
+        form.querySelector("button[type='submit']");
+
 
     submitButton.disabled = true;
-    submitButton.textContent = "Creating account...";
+
+    submitButton.textContent =
+        "Creating account...";
+
 
     try {
-        const response = await fetch("/api/register", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify({
-                full_name: fullName,
-                phone: phone,
-                country: country,
-                income: income,
-                loan_purpose: loanPurpose
-            })
-        });
 
-        const result = await response.json();
+        /*
+         * Send registration data to Vercel API
+         */
+        const response = await fetch(
+            "/api/register",
+            {
+                method: "POST",
 
-        if (!response.ok) {
-            throw new Error(result.error || "Registration failed.");
+                headers: {
+                    "Content-Type": "application/json",
+                    "Accept": "application/json"
+                },
+
+                body: JSON.stringify({
+
+                    full_name: fullName,
+
+                    phone: phoneClean,
+
+                    country: country,
+
+                    income: income,
+
+                    loan_purpose: loanPurpose
+
+                })
+            }
+        );
+
+
+        /*
+         * Read response as TEXT first.
+         *
+         * This prevents:
+         * "Unexpected token T ... is not valid JSON"
+         *
+         * if the server returns HTML or plain text.
+         */
+        const responseText =
+            await response.text();
+
+
+        let result;
+
+
+        try {
+
+            result =
+                JSON.parse(responseText);
+
+        } catch (parseError) {
+
+            console.error(
+                "Server returned non-JSON:",
+                responseText
+            );
+
+
+            throw new Error(
+                "The server returned an unexpected response. " +
+                "Please check the /api/register function."
+            );
         }
 
-        // Store prototype information locally
-        localStorage.setItem("customerId", result.customer?.id || "");
-        localStorage.setItem("fullname", fullName);
-        localStorage.setItem("phone", phone);
-        localStorage.setItem("country", country);
-        localStorage.setItem("income", income);
-        localStorage.setItem("loanPurpose", loanPurpose);
 
-        // Go to eligibility page
-        window.location.href = "eligibility.html";
+        /*
+         * Check API response
+         */
+        if (!response.ok) {
+
+            throw new Error(
+                result.error ||
+                "Registration failed."
+            );
+        }
+
+
+        /*
+         * Make sure customer data exists
+         */
+        if (
+            !result.customer ||
+            !result.customer.id
+        ) {
+
+            throw new Error(
+                "Account was created but no customer ID was returned."
+            );
+        }
+
+
+        /*
+         * Store non-sensitive prototype information
+         */
+        localStorage.setItem(
+            "customerId",
+            result.customer.id
+        );
+
+        localStorage.setItem(
+            "fullname",
+            fullName
+        );
+
+        localStorage.setItem(
+            "phone",
+            phoneClean
+        );
+
+        localStorage.setItem(
+            "country",
+            country
+        );
+
+        localStorage.setItem(
+            "income",
+            income
+        );
+
+        localStorage.setItem(
+            "loanPurpose",
+            loanPurpose
+        );
+
+
+        /*
+         * Continue to eligibility page
+         */
+        window.location.href =
+            "eligibility.html";
+
 
     } catch (error) {
-        console.error("Registration error:", error);
+
+        console.error(
+            "Registration error:",
+            error
+        );
+
 
         alert(
             error.message ||
             "Something went wrong. Please try again."
         );
 
-        submitButton.disabled = false;
-        submitButton.textContent = "Continue";
-    }
-});
-</script>
-```
 
+        submitButton.disabled = false;
+
+        submitButton.textContent =
+            "Continue";
+    }
+
+});
+
+</script>
 
 </body>
 </html>
+```
