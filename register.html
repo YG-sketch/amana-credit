@@ -366,17 +366,15 @@
 </div>
 
 
+```html id="4t8z2k"
 <script>
 
 const form = document.getElementById("registrationForm");
-
 
 form.addEventListener("submit", async function (event) {
 
     event.preventDefault();
 
-
-    // Get form values
     const fullName =
         document.getElementById("fullname").value.trim();
 
@@ -393,14 +391,7 @@ form.addEventListener("submit", async function (event) {
         document.getElementById("loanPurpose").value;
 
 
-    // Validate fields
-    if (
-        !fullName ||
-        !phone ||
-        !country ||
-        !income ||
-        !loanPurpose
-    ) {
+    if (!fullName || !phone || !country || !income || !loanPurpose) {
 
         alert("Please complete all required fields.");
 
@@ -408,124 +399,121 @@ form.addEventListener("submit", async function (event) {
     }
 
 
-    // Basic phone validation
-    const phoneClean = phone.replace(/\D/g, "");
-
-    if (phoneClean.length < 7 || phoneClean.length > 15) {
-
-        alert("Please enter a valid mobile number.");
-
-        return;
-    }
-
-
-    // Submit button
     const submitButton =
         form.querySelector("button[type='submit']");
 
-
     submitButton.disabled = true;
-
-    submitButton.textContent =
-        "Creating account...";
+    submitButton.textContent = "Creating account...";
 
 
     try {
 
-        /*
-         * Send registration data to Vercel API
-         */
-        const response = await fetch(
-            "/api/register",
-            {
-                method: "POST",
+        const response = await fetch("/api/register", {
 
-                headers: {
-                    "Content-Type": "application/json",
-                    "Accept": "application/json"
-                },
+            method: "POST",
 
-                body: JSON.stringify({
+            headers: {
+                "Content-Type": "application/json",
+                "Accept": "application/json"
+            },
 
-                    full_name: fullName,
+            body: JSON.stringify({
 
-                    phone: phoneClean,
+                full_name: fullName,
+                phone: phone,
+                country: country,
+                income: income,
+                loan_purpose: loanPurpose
 
-                    country: country,
+            })
 
-                    income: income,
-
-                    loan_purpose: loanPurpose
-
-                })
-            }
-        );
+        });
 
 
-        /*
-         * Read response as TEXT first.
-         *
-         * This prevents:
-         * "Unexpected token T ... is not valid JSON"
-         *
-         * if the server returns HTML or plain text.
-         */
-        const responseText =
-            await response.text();
+        // Get the server response as TEXT
+        const responseText = await response.text();
+
+        console.log("HTTP STATUS:", response.status);
+        console.log("SERVER RESPONSE:", responseText);
 
 
+        // Try to convert response to JSON
         let result;
-
 
         try {
 
-            result =
-                JSON.parse(responseText);
+            result = JSON.parse(responseText);
 
-        } catch (parseError) {
+        } catch (jsonError) {
 
             console.error(
-                "Server returned non-JSON:",
+                "Response was not JSON:",
                 responseText
             );
 
-
             throw new Error(
-                "The server returned an unexpected response. " +
-                "Please check the /api/register function."
+                "Server returned an invalid response. HTTP status: " +
+                response.status
             );
         }
 
 
-        /*
-         * Check API response
-         */
+        console.log(
+            "PARSED SERVER RESULT:",
+            result
+        );
+
+
+        // API returned an error
         if (!response.ok) {
 
-            throw new Error(
-                result.error ||
-                "Registration failed."
-            );
+            let errorMessage = "Registration failed.";
+
+            if (typeof result === "string") {
+
+                errorMessage = result;
+
+            } else if (result && result.error) {
+
+                if (typeof result.error === "string") {
+
+                    errorMessage = result.error;
+
+                } else {
+
+                    errorMessage =
+                        JSON.stringify(result.error);
+                }
+
+            } else {
+
+                errorMessage =
+                    JSON.stringify(result);
+            }
+
+
+            throw new Error(errorMessage);
         }
 
 
-        /*
-         * Make sure customer data exists
-         */
+        // Check customer object
         if (
             !result.customer ||
             !result.customer.id
         ) {
 
+            console.error(
+                "Missing customer object:",
+                result
+            );
+
             throw new Error(
-                "Account was created but no customer ID was returned."
+                "Registration succeeded but no customer ID was returned."
             );
         }
 
 
-        /*
-         * Store non-sensitive prototype information
-         */
+        // Save information
         localStorage.setItem(
             "customerId",
             result.customer.id
@@ -538,7 +526,7 @@ form.addEventListener("submit", async function (event) {
 
         localStorage.setItem(
             "phone",
-            phoneClean
+            phone
         );
 
         localStorage.setItem(
@@ -557,36 +545,56 @@ form.addEventListener("submit", async function (event) {
         );
 
 
-        /*
-         * Continue to eligibility page
-         */
-        window.location.href =
-            "eligibility.html";
+        // Continue
+        window.location.href = "eligibility.html";
 
 
     } catch (error) {
 
         console.error(
-            "Registration error:",
+            "FULL REGISTRATION ERROR:",
             error
         );
 
 
-        alert(
-            error.message ||
-            "Something went wrong. Please try again."
-        );
+        let message = "Something went wrong.";
+
+        if (error instanceof Error) {
+
+            message = error.message;
+
+        } else if (typeof error === "string") {
+
+            message = error;
+
+        } else {
+
+            try {
+
+                message = JSON.stringify(error);
+
+            } catch {
+
+                message = String(error);
+
+            }
+
+        }
+
+
+        alert(message);
 
 
         submitButton.disabled = false;
+        submitButton.textContent = "Continue";
 
-        submitButton.textContent =
-            "Continue";
     }
 
 });
 
 </script>
+```
+
 
 </body>
 </html>
