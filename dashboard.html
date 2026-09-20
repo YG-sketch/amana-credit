@@ -135,6 +135,11 @@
             font-size: 13px;
         }
 
+        .status.confirmed {
+            background: #ecfdf3;
+            color: #047857;
+        }
+
         .timeline {
             margin-top: 10px;
         }
@@ -412,19 +417,22 @@
                 </div>
 
 
-                <div class="step current">
+                <div
+                    class="step current"
+                    id="step4"
+                >
 
-                    <div class="circle">
+                    <div class="circle" id="step4Circle">
                         4
                     </div>
 
                     <div class="step-info">
 
-                        <h3>
+                        <h3 id="step4Title">
                             Payment verification
                         </h3>
 
-                        <p>
+                        <p id="step4Text">
                             Your transaction is awaiting
                             verification.
                         </p>
@@ -434,9 +442,12 @@
                 </div>
 
 
-                <div class="step">
+                <div
+                    class="step"
+                    id="step5"
+                >
 
-                    <div class="circle">
+                    <div class="circle" id="step5Circle">
                         5
                     </div>
 
@@ -494,7 +505,7 @@
 
             <div class="row">
 
-                <span>
+                <span id="referenceLabel">
                     Transaction reference
                 </span>
 
@@ -578,11 +589,26 @@ const transactionReference =
     || "Not provided";
 
 
+const mpesaReceiptNumber =
+    localStorage.getItem(
+        "mpesaReceiptNumber"
+    )
+    || "";
+
+
 const paymentStatus =
     localStorage.getItem(
         "paymentStatus"
     )
     || "PENDING_VERIFICATION";
+
+
+// M-PESA payments are confirmed instantly by Safaricom's callback,
+// so they don't need to wait on the manual proof-review step.
+
+const isMpesaConfirmed =
+    paymentMethod === "mpesa" &&
+    mpesaReceiptNumber !== "";
 
 
 const countries = {
@@ -645,26 +671,97 @@ document.getElementById(
     || "Payment method";
 
 
-document.getElementById(
-    "reference"
-).textContent =
-    transactionReference;
+if (isMpesaConfirmed) {
 
-
-if (
-    paymentStatus ===
-    "PENDING_VERIFICATION"
-) {
+    // Show the M-PESA receipt instead of a manually entered reference
 
     document.getElementById(
-        "status"
+        "referenceLabel"
     ).textContent =
-        "Pending verification";
+        "M-PESA receipt number";
+
+    document.getElementById(
+        "reference"
+    ).textContent =
+        mpesaReceiptNumber;
+
+
+    // Status badge
+
+    const statusEl =
+        document.getElementById("status");
+
+    statusEl.textContent =
+        "Payment confirmed";
+
+    statusEl.classList.add(
+        "confirmed"
+    );
 
     document.getElementById(
         "paymentStatus"
     ).textContent =
-        "Pending verification";
+        "Confirmed automatically via M-PESA";
+
+
+    // Advance the timeline: step 4 is now completed,
+    // step 5 becomes the current step instead.
+
+    const step4 =
+        document.getElementById("step4");
+
+    const step4Circle =
+        document.getElementById("step4Circle");
+
+    const step4Title =
+        document.getElementById("step4Title");
+
+    const step4Text =
+        document.getElementById("step4Text");
+
+    step4.classList.remove("current");
+    step4.classList.add("completed");
+
+    step4Circle.textContent = "✓";
+
+    step4Title.textContent =
+        "Payment verification";
+
+    step4Text.textContent =
+        "Your M-PESA payment was confirmed automatically.";
+
+
+    const step5 =
+        document.getElementById("step5");
+
+    step5.classList.add("current");
+
+} else {
+
+    // Default flow for manual payment methods (Airtel, MTN, etc.)
+    // awaiting manual verification.
+
+    document.getElementById(
+        "reference"
+    ).textContent =
+        transactionReference;
+
+    if (
+        paymentStatus ===
+        "PENDING_VERIFICATION"
+    ) {
+
+        document.getElementById(
+            "status"
+        ).textContent =
+            "Pending verification";
+
+        document.getElementById(
+            "paymentStatus"
+        ).textContent =
+            "Pending verification";
+
+    }
 
 }
 
