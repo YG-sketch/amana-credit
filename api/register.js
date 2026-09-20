@@ -1,4 +1,3 @@
-```javascript
 export default async function handler(req, res) {
   // Only allow POST requests
   if (req.method !== "POST") {
@@ -41,57 +40,49 @@ export default async function handler(req, res) {
 
     // Get Supabase credentials from Vercel environment variables
     const supabaseUrl = process.env.SUPABASE_URL;
-    const supabaseKey =
-      process.env.SUPABASE_SERVICE_ROLE_KEY;
+    const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
     if (!supabaseUrl || !supabaseKey) {
-      console.error(
-        "Supabase environment variables are missing."
-      );
+      console.error("Supabase environment variables are missing.");
 
       return res.status(500).json({
         error: "Server configuration is incomplete."
       });
     }
 
+    // Build the Supabase REST URL (no template literals, to avoid character issues)
+    const supabaseRestUrl = supabaseUrl + "/rest/v1/customers";
+    const authHeaderValue = "Bearer " + supabaseKey;
+
     // Insert customer into Supabase
-    const supabaseResponse = await fetch(
-      `${supabaseUrl}/rest/v1/customers`,
-      {
-        method: "POST",
+    const supabaseResponse = await fetch(supabaseRestUrl, {
+      method: "POST",
 
-        headers: {
-          "Content-Type": "application/json",
-          "apikey": supabaseKey,
-          "Authorization": `Bearer ${supabaseKey}`,
-          "Prefer": "return=representation"
-        },
+      headers: {
+        "Content-Type": "application/json",
+        "apikey": supabaseKey,
+        "Authorization": authHeaderValue,
+        "Prefer": "return=representation"
+      },
 
-        body: JSON.stringify({
-          full_name: full_name.trim(),
-          phone: phone.trim(),
-          country: country,
-          income: income,
-          loan_purpose: loan_purpose
-        })
-      }
-    );
+      body: JSON.stringify({
+        full_name: full_name.trim(),
+        phone: phone.trim(),
+        country: country,
+        income: income,
+        loan_purpose: loan_purpose
+      })
+    });
 
     // Read Supabase response
-    const responseText =
-      await supabaseResponse.text();
+    const responseText = await supabaseResponse.text();
 
     let data;
 
     try {
-      data = responseText
-        ? JSON.parse(responseText)
-        : null;
+      data = responseText ? JSON.parse(responseText) : null;
     } catch (error) {
-      console.error(
-        "Supabase returned non-JSON:",
-        responseText
-      );
+      console.error("Supabase returned non-JSON:", responseText);
 
       return res.status(500).json({
         error: "Supabase returned an unexpected response."
@@ -100,37 +91,27 @@ export default async function handler(req, res) {
 
     // Supabase returned an error
     if (!supabaseResponse.ok) {
-      console.error(
-        "Supabase error:",
-        JSON.stringify(data, null, 2)
-      );
+      console.error("Supabase error:", JSON.stringify(data, null, 2));
 
-      let message =
-        "Unable to create customer.";
+      let message = "Unable to create customer.";
 
-      if (data?.message) {
+      if (data && data.message) {
         message = data.message;
-      } else if (data?.error) {
+      } else if (data && data.error) {
         message = data.error;
-      } else if (data?.hint) {
+      } else if (data && data.hint) {
         message = data.hint;
       }
 
-      return res.status(
-        supabaseResponse.status
-      ).json({
+      return res.status(supabaseResponse.status).json({
         error: message
       });
     }
 
     // Make sure a customer was created
-    if (
-      !Array.isArray(data) ||
-      data.length === 0
-    ) {
+    if (!Array.isArray(data) || data.length === 0) {
       return res.status(500).json({
-        error:
-          "Customer was not returned by Supabase."
+        error: "Customer was not returned by Supabase."
       });
     }
 
@@ -141,17 +122,10 @@ export default async function handler(req, res) {
     });
 
   } catch (error) {
-    console.error(
-      "Registration error:",
-      error
-    );
+    console.error("Registration error:", error);
 
     return res.status(500).json({
-      error:
-        error.message ||
-        "Server error."
+      error: error.message || "Server error."
     });
   }
 }
-```
-
