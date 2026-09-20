@@ -177,11 +177,86 @@
             background: #115e59;
         }
 
+        .continue-btn:disabled {
+            background: #98a2b3;
+            cursor: not-allowed;
+        }
+
         .notice {
             margin-top: 18px;
             font-size: 13px;
             color: #667085;
             line-height: 1.5;
+        }
+
+        /* M-Pesa auto-payment box */
+
+        .mpesa-box {
+            margin-top: 20px;
+            padding: 18px;
+            background: #f0fdf4;
+            border: 1px solid #bbf7d0;
+            border-radius: 10px;
+        }
+
+        .mpesa-box label {
+            display: block;
+            font-weight: bold;
+            color: #172033;
+            margin-bottom: 6px;
+            font-size: 14px;
+        }
+
+        .mpesa-box input {
+            width: 100%;
+            padding: 11px;
+            border-radius: 8px;
+            border: 1px solid #d0d5dd;
+            font-size: 15px;
+            margin-bottom: 12px;
+        }
+
+        .mpesa-pay-btn {
+            width: 100%;
+            padding: 13px;
+            border: none;
+            border-radius: 8px;
+            background: #0b6e4f;
+            color: white;
+            font-weight: bold;
+            font-size: 15px;
+            cursor: pointer;
+        }
+
+        .mpesa-pay-btn:disabled {
+            background: #98a2b3;
+            cursor: not-allowed;
+        }
+
+        .mpesa-status {
+            margin-top: 12px;
+            padding: 12px;
+            border-radius: 8px;
+            font-size: 14px;
+            display: none;
+        }
+
+        .mpesa-status.pending {
+            background: #fff7e6;
+            color: #93650c;
+            display: block;
+        }
+
+        .mpesa-status.success {
+            background: #e7f8ee;
+            color: #05603a;
+            display: block;
+        }
+
+        .mpesa-status.failed {
+            background: #fdecea;
+            color: #99251a;
+            display: block;
         }
 
         @media (max-width: 600px) {
@@ -309,10 +384,45 @@
             >
             </div>
 
+            <!-- Automatic M-Pesa STK push box, shown only for M-Pesa -->
+
+            <div
+                id="mpesaBox"
+                class="mpesa-box"
+                style="display:none;"
+            >
+
+                <label for="mpesaPhone">
+                    M-PESA Phone Number
+                </label>
+
+                <input
+                    type="tel"
+                    id="mpesaPhone"
+                    placeholder="0785603589"
+                >
+
+                <button
+                    id="mpesaPayBtn"
+                    class="mpesa-pay-btn"
+                    onclick="initiateMpesaPayment()"
+                >
+                    Pay Now
+                </button>
+
+                <div
+                    id="mpesaStatus"
+                    class="mpesa-status"
+                >
+                </div>
+
+            </div>
+
         </div>
 
 
         <button
+            id="continueBtn"
             class="continue-btn"
             onclick="continueToProof()"
         >
@@ -548,14 +658,34 @@ function showInstructions(method) {
             "paymentNumber"
         );
 
+    const mpesaBox =
+        document.getElementById(
+            "mpesaBox"
+        );
 
-    /*
-       IMPORTANT:
-       Replace these placeholders with
-       your verified business payment
-       details only after the relevant
-       payment accounts are configured.
-    */
+    const continueBtn =
+        document.getElementById(
+            "continueBtn"
+        );
+
+
+    // Reset M-Pesa box and status each time a method is chosen
+
+    mpesaBox.style.display = "none";
+
+    document.getElementById(
+        "mpesaStatus"
+    ).className = "mpesa-status";
+
+    document.getElementById(
+        "mpesaStatus"
+    ).textContent = "";
+
+    continueBtn.disabled = false;
+
+    continueBtn.textContent =
+        "I Have Made the Payment";
+
 
     if (
         country === "KE" &&
@@ -563,10 +693,33 @@ function showInstructions(method) {
     ) {
 
         instructionText.textContent =
-            "Use the official M-PESA payment option provided by the business.";
+            "Enter your M-PESA number below. You will receive a prompt on your phone to complete payment automatically.";
 
-        paymentNumber.textContent =
-            "Payment gateway: M-PESA";
+        paymentNumber.textContent = "";
+
+        mpesaBox.style.display = "block";
+
+        // Prefill phone number if it was captured at registration
+
+        const savedPhone =
+            localStorage.getItem("phone");
+
+        if (savedPhone) {
+
+            document.getElementById(
+                "mpesaPhone"
+            ).value = savedPhone;
+
+        }
+
+        // Payment is completed automatically once M-Pesa confirms,
+        // so the manual "I Have Made the Payment" button is disabled
+        // until that happens.
+
+        continueBtn.disabled = true;
+
+        continueBtn.textContent =
+            "Waiting for M-PESA payment...";
 
     }
 
@@ -630,6 +783,235 @@ function showInstructions(method) {
 }
 
 
+let mpesaPollTimer = null;
+
+
+function setMpesaStatus(message, type) {
+
+    const statusBox =
+        document.getElementById(
+            "mpesaStatus"
+        );
+
+    statusBox.textContent = message;
+    statusBox.className =
+        "mpesa-status " + type;
+
+}
+
+
+function stopMpesaPolling() {
+
+    if (mpesaPollTimer) {
+
+        clearInterval(mpesaPollTimer);
+        mpesaPollTimer = null;
+
+    }
+
+}
+
+
+function pollMpesaStatus(checkoutRequestId) {
+
+    let attempts = 0;
+    const maxAttempts = 20; // roughly 60 seconds at 3s interval
+
+    mpesaPollTimer = setInterval(function() {
+
+        attempts++;
+
+        fetch(
+            "/api/mpesa-status?checkoutRequestId=" +
+            encodeURIComponent(checkoutRequestId)
+        )
+            .then(function(res) {
+                return res.json();
+            })
+            .then(function(result) {
+
+                if (result.status === "success") {
+
+                    stopMpesaPolling();
+
+                    setMpesaStatus(
+                        "Payment received! Receipt: " +
+                        (result.mpesa_receipt_number || "N/A"),
+                        "success"
+                    );
+
+                    localStorage.setItem(
+                        "paymentMethod",
+                        "mpesa"
+                    );
+
+                    localStorage.setItem(
+                        "mpesaReceiptNumber",
+                        result.mpesa_receipt_number || ""
+                    );
+
+                    const continueBtn =
+                        document.getElementById(
+                            "continueBtn"
+                        );
+
+                    continueBtn.disabled = false;
+
+                    continueBtn.textContent =
+                        "Continue";
+
+                    document.getElementById(
+                        "mpesaPayBtn"
+                    ).disabled = false;
+
+                    document.getElementById(
+                        "mpesaPayBtn"
+                    ).textContent = "Pay Now";
+
+                }
+
+                else if (result.status === "failed") {
+
+                    stopMpesaPolling();
+
+                    setMpesaStatus(
+                        "Payment failed: " +
+                        (result.result_desc || "Please try again."),
+                        "failed"
+                    );
+
+                    document.getElementById(
+                        "mpesaPayBtn"
+                    ).disabled = false;
+
+                    document.getElementById(
+                        "mpesaPayBtn"
+                    ).textContent = "Pay Now";
+
+                }
+
+                else if (attempts >= maxAttempts) {
+
+                    stopMpesaPolling();
+
+                    setMpesaStatus(
+                        "Still waiting on confirmation. If you completed the payment, check back shortly.",
+                        "pending"
+                    );
+
+                    document.getElementById(
+                        "mpesaPayBtn"
+                    ).disabled = false;
+
+                    document.getElementById(
+                        "mpesaPayBtn"
+                    ).textContent = "Pay Now";
+
+                }
+
+            })
+            .catch(function() {
+                // Ignore transient network errors, keep polling
+            });
+
+    }, 3000);
+
+}
+
+
+function initiateMpesaPayment() {
+
+    const phone =
+        document.getElementById(
+            "mpesaPhone"
+        ).value.trim();
+
+    if (!phone) {
+
+        setMpesaStatus(
+            "Please enter your M-PESA phone number.",
+            "failed"
+        );
+
+        return;
+
+    }
+
+    const payBtn =
+        document.getElementById(
+            "mpesaPayBtn"
+        );
+
+    payBtn.disabled = true;
+    payBtn.textContent = "Sending prompt...";
+
+    setMpesaStatus(
+        "Sending payment prompt to your phone...",
+        "pending"
+    );
+
+    fetch("/api/mpesa-initiate", {
+
+        method: "POST",
+
+        headers: {
+            "Content-Type": "application/json"
+        },
+
+        body: JSON.stringify({
+            phone: phone,
+            amount: processingFee
+        })
+
+    })
+        .then(function(res) {
+            return res.json();
+        })
+        .then(function(result) {
+
+            if (result.success) {
+
+                payBtn.textContent =
+                    "Waiting for confirmation...";
+
+                setMpesaStatus(
+                    "Check your phone and enter your M-PESA PIN.",
+                    "pending"
+                );
+
+                pollMpesaStatus(
+                    result.checkoutRequestId
+                );
+
+            } else {
+
+                payBtn.disabled = false;
+                payBtn.textContent = "Pay Now";
+
+                setMpesaStatus(
+                    result.error ||
+                    "Something went wrong. Please try again.",
+                    "failed"
+                );
+
+            }
+
+        })
+        .catch(function() {
+
+            payBtn.disabled = false;
+            payBtn.textContent = "Pay Now";
+
+            setMpesaStatus(
+                "Network error. Please try again.",
+                "failed"
+            );
+
+        });
+
+}
+
+
 function continueToProof() {
 
     const selected =
@@ -642,6 +1024,20 @@ function continueToProof() {
 
         alert(
             "Please select a payment method first."
+        );
+
+        return;
+
+    }
+
+
+    if (
+        selected.value === "mpesa" &&
+        !localStorage.getItem("mpesaReceiptNumber")
+    ) {
+
+        alert(
+            "Please complete the M-PESA payment first."
         );
 
         return;
