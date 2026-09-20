@@ -318,22 +318,26 @@
 
 </div>
 
+```html
 <script>
-const form = document.getElementById("registerForm");
+const form = document.getElementById("registrationForm");
 
 form.addEventListener("submit", async function (event) {
     event.preventDefault();
 
-    const fullName = document.getElementById("fullName").value.trim();
+    const fullName = document.getElementById("fullname").value.trim();
     const phone = document.getElementById("phone").value.trim();
-    const country = document.getElementById("country").value;
+    const country = document.getElementById("countryCode").value;
+    const income = document.getElementById("income").value;
+    const loanPurpose = document.getElementById("loanPurpose").value;
 
-    if (!fullName || !phone || !country) {
+    if (!fullName || !phone || !country || !income || !loanPurpose) {
         alert("Please complete all required fields.");
         return;
     }
 
     const submitButton = form.querySelector("button[type='submit']");
+
     submitButton.disabled = true;
     submitButton.textContent = "Creating account...";
 
@@ -346,7 +350,9 @@ form.addEventListener("submit", async function (event) {
             body: JSON.stringify({
                 full_name: fullName,
                 phone: phone,
-                country: country
+                country: country,
+                income: income,
+                loan_purpose: loanPurpose
             })
         });
 
@@ -356,24 +362,32 @@ form.addEventListener("submit", async function (event) {
             throw new Error(result.error || "Registration failed.");
         }
 
-        // Keep only non-sensitive information locally for the prototype.
-        localStorage.setItem("customerId", result.customer.id);
+        // Store prototype information locally
+        localStorage.setItem("customerId", result.customer?.id || "");
         localStorage.setItem("fullname", fullName);
         localStorage.setItem("phone", phone);
         localStorage.setItem("country", country);
+        localStorage.setItem("income", income);
+        localStorage.setItem("loanPurpose", loanPurpose);
 
+        // Go to eligibility page
         window.location.href = "eligibility.html";
 
     } catch (error) {
-        console.error(error);
-        alert(error.message || "Something went wrong. Please try again.");
+        console.error("Registration error:", error);
+
+        alert(
+            error.message ||
+            "Something went wrong. Please try again."
+        );
 
         submitButton.disabled = false;
         submitButton.textContent = "Continue";
     }
 });
-    
 </script>
+```
+
 
 </body>
 </html>
