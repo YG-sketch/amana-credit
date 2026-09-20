@@ -1,3 +1,4 @@
+```javascript
 export default async function handler(req, res) {
   if (req.method !== "POST") {
     return res.status(405).json({
@@ -6,7 +7,13 @@ export default async function handler(req, res) {
   }
 
   try {
-    const { full_name, phone, country } = req.body || {};
+    const {
+      full_name,
+      phone,
+      country,
+      income,
+      loan_purpose
+    } = req.body || {};
 
     if (!full_name || !phone || !country) {
       return res.status(400).json({
@@ -31,7 +38,7 @@ export default async function handler(req, res) {
       });
     }
 
-    const response = await fetch(
+    const supabaseResponse = await fetch(
       `${supabaseUrl}/rest/v1/customers`,
       {
         method: "POST",
@@ -44,18 +51,35 @@ export default async function handler(req, res) {
         body: JSON.stringify({
           full_name: full_name.trim(),
           phone: phone.trim(),
-          country
+          country: country,
+          income: income || null,
+          loan_purpose: loan_purpose || null
         })
       }
     );
 
-    const data = await response.json();
+    // Read as text first so a non-JSON Supabase response
+    // does not crash the API.
+    const responseText = await supabaseResponse.text();
 
-    if (!response.ok) {
-      console.error("Supabase error:", data);
+    let data;
+
+    try {
+      data = JSON.parse(responseText);
+    } catch (parseError) {
+      console.error("Supabase returned non-JSON:", responseText);
 
       return res.status(500).json({
-        error: "Unable to create customer."
+        error: "Supabase returned an unexpected response.",
+        details: responseText.substring(0, 300)
+      });
+    }
+
+    if (!supabaseResponse.ok) {
+      console.error("Supabase error:", data);
+
+      return res.status(supabaseResponse.status).json({
+        error: data?.message || data?.hint || "Unable to create customer."
       });
     }
 
@@ -68,7 +92,8 @@ export default async function handler(req, res) {
     console.error("Registration error:", error);
 
     return res.status(500).json({
-      error: "Server error."
+      error: error.message || "Server error."
     });
   }
 }
+```
